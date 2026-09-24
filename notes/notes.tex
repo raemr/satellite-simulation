@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+
+Trying to see whether a one-assignment repair actually helps greedy, and how much slower it is. Start with one frozen instant. Each target is worth one; satellites have beam limits. Links need enough elevation, and beams from the same satellite need enough angular separation.
+
+For greedy: go through targets in input order, try the closest satellite that still works. Use satellite index to break a distance tie.
+
+\medskip
+\noindent\textbf{Example to reproduce in code.} Set Earth's radius to 1. This puts the satellites unrealistically high, but makes the arithmetic easy. Everything is on the equator:
+\[
+\begin{array}{c|cccc}
+& A & B & S_1 & S_2 \\ \hline
+\text{longitude} & 0^\circ & 30^\circ & 15^\circ & -30^\circ \\
+\text{radius} & 1 & 1 & 2 & 2
+\end{array}
+\]
+Capacity 1 per satellite; minimum elevation $20^\circ$. For longitude difference $\Delta$,
+\[
+\text{distance}=\sqrt{5-4\cos\Delta},\qquad
+\sin e=\frac{2\cos\Delta-1}{\sqrt{5-4\cos\Delta}}.
+\]
+The useful numbers:
+\[
+\begin{array}{c|cc}
+& \text{distance} & \text{elevation} \\ \hline
+A\to S_1 & 1.066 & 60.95^\circ \\
+A\to S_2 & 1.239 & 36.21^\circ \\
+B\to S_1 & 1.066 & 60.95^\circ \\
+B\to S_2 & 1.732 & 0^\circ
+\end{array}
+\]
+Process $A$ first: it takes $S_1$ because that is closer. $B$ can only see $S_1$, so greedy serves 1. Move $A$ to $S_2$ and give $S_1$ to $B$: now it serves 2. This example doesn't exercise beam separation since both satellites have capacity 1.
+
+\end{document}
