@@ -4,7 +4,7 @@
 
 \noindent\textbf{NEVERMIND. Start with one moving link.}
 
-The first commit jumped straight to assigning beams in a frozen scene. That assumes I already know when a beam can serve a target. I'd rather work that out for one moving satellite first. One satellite, one ground target, one pass: orbit, where to point, when the signal arrives, and what Doppler does to its frequency. Then I can add beam contour (?) and SINR before going back to allocation.
+The first commit jumped straight to assigning beams in a frozen scene. That assumes I already know when a beam can serve a target. I'd rather work that out for one moving satellite first. One satellite, one ground target, one pass: orbit, where to point, when the signal arrives, and what Doppler does to its frequency. I also tried one nearby interfering beam to see what a toy SINR looks like.
 
 \medskip
 \noindent\textbf{[done-ish] Motion first.} Keep it in a plane for now. Let $r=(x,y)$ and $v=(v_x,v_y)$ for the satellite:
@@ -37,6 +37,19 @@ The output shows the shift if I send 2 GHz, plus the transmit adjustment needed 
 \noindent\textbf{Numbers so far:} directly overhead: 550 km range, 1.835 ms travel, about 0.85 m of ground motion during that time. At $t=-120$ s the shift is about $+37.5$ kHz; at $t=+120$ s it is about $-37.5$ kHz. Small aiming miss, noticeable frequency shift. The size of that miss relative to a beam footprint comes later.
 
 \medskip
-\noindent\textbf{[next] Beam contour (?) + SINR.} Pick a simple gain curve, add one co-channel interfering beam and a noise level $\Rightarrow$ toy SINR. Then look at how often pointing/frequency should be updated. No SINR result yet.
+\noindent\textbf{[added] Beam contour (?) + SINR.} I put a second ground target $0.3^\circ$ away and point another beam from the same satellite at it. Both beams use the same frequency and 10 W. I am pretending the transmit gain falls off like
+\[
+G(\theta)=1000\exp\!\left[-\frac12\left(\frac{\theta}{2^\circ}\right)^2\right].
+\]
+The receiver gain is 1. Same free-space path factor for both beams at the first target; noise is $kTB$ with $T=290$ K and $B=1$ MHz:
+\[
+S=10G(0)\left(\frac{\lambda}{4\pi d}\right)^2,\quad
+I=10G(\theta)\left(\frac{\lambda}{4\pi d}\right)^2,\quad
+\mathrm{SINR}=\frac{S}{I+kTB}.
+\]
+At overhead I get about 6.5 dB SINR. Near the edge of this pass it is around 0 dB. That is what this made-up contour says, not an antenna measurement. The code re-aims both beams at every sample, so there is no stale-pointing effect yet.
+
+\medskip
+\noindent\textbf{[next] Updates???} Hold a pointing direction and transmit frequency for a few seconds, then see what goes bad before the next update. After that I can clean up the note and list the assumptions in one place.
 
 \end{document}
